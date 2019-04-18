@@ -74,8 +74,7 @@
 	* ```Ctrl+W```
 
 
-
-
-
+## 参考
+[chap0x02 Vimtutor操作录像](https://github.com/CUCCS/linux-2019-jckling/pull/2#issuecomment-475242306)
 
 
