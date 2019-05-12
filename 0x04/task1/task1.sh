@@ -9,7 +9,7 @@ help(){
 		-r|resize 对jpeg/png/svg格式图片在保持原始宽高比的前提下压缩分辨率
 		-w|-watermark 对图片批量添加自定义文本水印
 		-p|-prefix 批量添加文件名前缀
-		-s|-suffic 批量添加文件名后缀（不影响扩展名）
+		-s|-suffix 批量添加文件名后缀（不影响扩展名）
 		-c 将png/svg图片统一转换为jpg格式
 EOF
 
@@ -60,7 +60,7 @@ resize(){
 	for file in $(find "$file_path" -name "*.jpg" -or -name "*.png" -or -name "*.svg")
 	do
 		 # 调用imagemagick 
-			convert -resize "$scale" "$file" "${file%.*}_resize.${file#*.}"
+			convert -resize "$scale" "$file" "${file%.*}_resize.${file##*.}"
 	done
 }
 
@@ -76,7 +76,7 @@ watermark(){
 	for file in $(find "$file_path" -name "*.jpg" -or -name "*.png")
 	do
 		 # 调用imagemagick 
-		convert -draw "text 10,10 '$watermark'" -gravity NorthWest -pointsize 35 "$file" "${file%.*}_watermark.${file#*.}"
+		convert -draw "text 10,10 '$watermark'" -gravity NorthWest -pointsize 35 "$file" "${file%.*}_watermark.${file##*.}"
 	done
 
 }
@@ -89,10 +89,10 @@ prefix(){
 		prefix="$tmp"
 		# shift 1
 	fi
-	for file in $file_path 
+	for file in `ls $file_path` 
 	do
 		# 修改文件名
-		mv "$file" "${file%%/*}${prefix}_${file##*/}"
+		mv "${file_path}/$file" "${file_path}/${file%%/*}${prefix}_${file##*/}"
 	done
 }
 
@@ -103,11 +103,13 @@ suffix(){
 		suffix="$tmp"
 		# shift 1
 	fi
-	for file in $file_path
+	for file in `ls	$file_path`
 	do
 		# 修改文件名
-		mv "$file" "${file%.*}_${suffix}.${file#*.}"
+		# echo "${file_path}/$file"
+		mv "${file_path}/$file" "${file_path}/${file%.*}_${suffix}.${file##*.}"
 	done
+	`cd ..`
 }
 
 # 支持将png/svg图片统一转换为jpg格式
@@ -144,7 +146,7 @@ do
 		-p|-prefix)
 			shift 1 
 			prefix "$1" ;;
-		-s|-suffic)
+		-s|-suffix)
 			shift 1
 			suffix "$1" ;;
 		-c)
