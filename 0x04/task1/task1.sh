@@ -15,7 +15,7 @@ EOF
 
 }
 
-file_path="/home/shielding/try/img"
+file_path="/home/shielding/try/task1/img"
 quality=80
 scale="50x50"
 watermark="watermark"
@@ -38,13 +38,13 @@ quality(){
 	tmp="$1"
 	if [[ ! "${tmp:0:1}" = "-" && ! "${tmp:0:1}" = "" ]]
 	then
-		quality=tmp
+		quality=$tmp
 		# shift 1
 	fi
-	for file in $(find "$file_path" \( -name "*.jpg" \))
+	for file in $(find "$file_path" -name "*.jpg" )
 	do
 		 # 调用imagemagick 
-		convert -quality $quality "$file" "${file%.jpg}_quality.jpg"
+		convert -quality "$quality" "$file" "${file%.jpg}_quality.jpg"
 	done
 
 }
@@ -54,13 +54,13 @@ resize(){
 	tmp="$1"
 	if [[ ! "${tmp:0:1}" = "-" && ! "${tmp:0:1}" = "" ]]
 	then
-		scale=tmp
+		scale="$tmp"
 		# shift 1
 	fi
-	for file in $(find "$file_path"  -name "*.jpg" -or -name "*.png" -or -name "*.svg")
+	for file in $(find "$file_path" -name "*.jpg" -or -name "*.png" -or -name "*.svg")
 	do
 		 # 调用imagemagick 
-			convert -resize $scale "$file" "${file%.*}_resize.${file#*.}"
+			convert -resize "$scale" "$file" "${file%.*}_resize.${file#*.}"
 	done
 }
 
@@ -70,10 +70,10 @@ watermark(){
 	# echo $tmp
 	if [[ ! "${tmp:0:1}" = "-" && ! "${tmp:0:1}" = "" ]]
 	then
-		watermark=tmp
+		watermark="$tmp"
 		# shift 1
 	fi
-	for file in $(find "$file_path" \( -name "*.jpg" -or -name "*.png"\))
+	for file in $(find "$file_path" -name "*.jpg" -or -name "*.png")
 	do
 		 # 调用imagemagick 
 		convert -draw "text 10,10 '$watermark'" -gravity NorthWest -pointsize 35 "$file" "${file%.*}_watermark.${file#*.}"
@@ -86,7 +86,7 @@ prefix(){
 	tmp="$1"
 	if [[ ! "${tmp:0:1}" = "-" && ! "${tmp:0:1}" = "" ]]
 	then
-		prefix=tmp
+		prefix="$tmp"
 		# shift 1
 	fi
 	for file in $file_path 
@@ -100,7 +100,7 @@ suffix(){
 	tmp="$1"
 	if [[ ! "${tmp:0:1}" = "-" && ! "${tmp:0:1}" = "" ]]
 	then
-		suffix=tmp
+		suffix="$tmp"
 		# shift 1
 	fi
 	for file in $file_path
@@ -112,7 +112,7 @@ suffix(){
 
 # 支持将png/svg图片统一转换为jpg格式
 change_to_jpg(){
-	for file in $(find "$file_path" \( -name "*.svg" -or -name "*.png"\))
+	for file in $(find "$file_path" -name "*.svg" -or -name "*.png")
 	do 
 		# 调用imagemagick 一定要加上-flatten！！
 		convert -background white "$file" -flatten "${file%.*}.jpg"
