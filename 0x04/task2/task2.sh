@@ -21,7 +21,7 @@ compute(){
 	|awk -F '\t' \
 	'BEGIN{max=0;min=100;mark_max="";mark_min=""}\
 	{if(length($9)>max){max=length($9);mark_max=$9};if(length($9)<min){min=length($9);mark_min=$9}}\
-END{printf("名字最长的球员是%s,名字最长的球员是%s\n",mark_max,mark_min)}' worldcupplayerinfo.tsv
+END{printf("名字最长的球员是%s,名字最短的球员是%s\n",mark_max,mark_min)}' worldcupplayerinfo.tsv
 	
 	#  统计不同年龄区间范围（20岁以下、[20-30]、30岁以上）的球员数量、百分比
 	# 年龄最大的球员是谁？年龄最小的球员是谁？

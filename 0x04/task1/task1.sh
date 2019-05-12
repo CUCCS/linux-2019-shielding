@@ -109,7 +109,6 @@ suffix(){
 		# echo "${file_path}/$file"
 		mv "${file_path}/$file" "${file_path}/${file%.*}_${suffix}.${file##*.}"
 	done
-	`cd ..`
 }
 
 # 支持将png/svg图片统一转换为jpg格式
