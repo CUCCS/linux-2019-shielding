@@ -19,15 +19,18 @@ script:
   - bash 0x04/task1/task1.sh -d 0x04/task1/img -r
   - bash 0x04/task1/task1.sh -d 0x04/task1/img -w "shielding"
   - bash 0x04/task1/task1.sh -d 0x04/task1/img -s "new"
-  - bash 0x04/task3/task3.sh -h -1 -2 -3 -4 -5 -6 
+  - bash 0x04/task2/task2.sh -h
+  - bash 0x04/task2/task2.sh -c
+  - bash 0x04/task3/task3.sh -h -1 -2 -3 -4 -5 -6 news.ti.com
   
 
 after_script: 
+  - ls 0x04/task1/img
   - /usr/bin/shellcheck 0x04/task1/task1.sh
+  - /usr/bin/shellcheck 0x04/task2/task2.sh
   - /usr/bin/shellcheck 0x04/task3/task3.sh
 
 after_failure:
-  - ls 0x04/task1/img
   - id
   - pwd
   - df -h
