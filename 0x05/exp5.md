@@ -132,21 +132,24 @@ sudo vim /etc/nginx/snippets/self-signed.conf
 ```
 # 在nginx中配置wordpress
 sudo vim /etc/nginx/sites-available/default
+```
+
+* 修改配置前
+
+![](img/nginx.png)
+
+* 修改配置后
+
+![](img/nginx1.png)
+
+![](img/check.png)
+
+```
 # 检查配置文件语法错误 
 sudo nginx -t
 # 启动nginx
 sudo /usr/sbin/nginx -c /etc/nginx/nginx.conf
 ```
-
-* 配置前
-
-![](img/nginx.png)
-
-* 配置后
-
-![](img/nginx1.png)
-
-![](img/check.png)
 
 * 创建数据库
 
@@ -225,12 +228,22 @@ sudo /opt/verynginx/openresty/nginx/sbin/nginx -s reload
 
 ![](img/dvwa.png)
 
+```
+sudo vim  /etc/php/7.2/fpm/php.ini
+### 修改php.ini中下列选项
+    allow_url_include = On
+## 重启使配置生效
+systemctl restart php7.2-fpm
+```
+
 ## 完成实验任务
 
 * 在nginx配置文件中，在wordpress和DVWA的监听端口前分别加上127.0.0.1:
 
+* 配置verynginx
+
 ```
-# 配置verynginx
+# 打开verynginx配置文件
 sudo vim /opt/verynginx/openresty/nginx/conf/nginx.conf
 # 加入以下内容，开启443端口用于访问wordpress
 server {
@@ -252,9 +265,95 @@ server {
 }
 ```
 
+#### 排错
+* 此时遇到了一个神奇的局面，无论输入什么".sec.cuc.edu.cn"都会是：如果紧跟着的端口号输入8009会显示wordpress界面，输入8001会显示DVDA界面；不输入端口号则是“Welcome to nginx!”界面。很明显和预想的效果不符，说明有地方配置错了或者忽略了。
+* 然后经过一番艰苦的猜测和检查后发现……veryngix配置界面太坑了，原来从始至终我都没有点击（甚至都没看见）save键！？
+
+##### 另外如果忘了mysql的密码
+
+```
+# 查看mysql用户名密码
+cd /etc/mysql 
+sudo vim debian.cnf
+# 登录mysql
+mysql -u debian-sys-maint(或者别的用户名） -p 
+use wordpress
+select * from wp_options limit 3;
+```
+
+##### 保存了verynginx的配置之后
+
+* 输入dvwa.sec.cuc.edu.cn:
+
+![](img/ok1.png)
+
+* 输入wp.sec.cuc.edu.cn
+
+![](img/error1.png)
+
+* DVWA没有问题了，wordpress有问题
+
+
+### 不允许直接访问ip地址
+
+* DVWA和wordpress在之前设置时都不能用ip地址直接访问了，所以这里设置让nginx的界面也不能显示
+
+* 添加matcher
+![](img/1-2.png)
+
+* 添加response
+![](img/1-3.png)
+
+* 添加filter
+![](img/1-1.png)
+
+* 结果
+![](img/1-0.png)
+
+### DVWA设置白名单
+
+* 添加matcher
+![](img/2-1.png)
+
+* 添加response
+![](img/2-2.png)
+
+* 添加filter
+![](img/2-3.png)
+
+* 结果
+![](img/2-0.png)
+
+### verynginx设置白名单
+
+* 添加matcher
+![](img/3-1.png)
+
+* 添加response
+![](img/3-2.png)
+
+* 添加filter
+![](img/3-3.png)
+
+* 结果
+![](img/3-0.png)
+
+#### 限制DVWA站点的单IP访问速率为每秒请求数 < 50
+
+![](img/4.png)
+
+#### 禁止curl访问
+
+* 添加matcher
+![](img/5-1.png)
+
+* 添加filter
+![](img/5.png)
+
 ## 参考
 1. [在Nginx负载均衡上通过反向代理运行php-fpm的原理详解](http://www.chinacion.cn/article/111.html)
 2. [Linux中如何查看某个端口是否被占用](https://www.cnblogs.com/hindy/p/7249234.html)
 3. [nginx错误：emerg getpwnam(“www”) failed](https://blog.csdn.net/u012383839/article/details/72875210)
 4. [ubuntu16.04安装wordpress](https://www.cnblogs.com/youcong/p/9309197.html)
 5. [Nginx的启动、停止与重启](https://www.cnblogs.com/codingcloud/p/5095066.html)
+6. [MySQL数据库之ubuntu中查看已有的mysql用户并修改用户名和密码](http://m.zhizuobiao.com/mysql/mysql-18082000106/)
